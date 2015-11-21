@@ -23,6 +23,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.pires.obd.commands.protocol.EchoOffCommand;
+import com.github.pires.obd.commands.protocol.LineFeedOffCommand;
+import com.github.pires.obd.commands.protocol.ObdResetCommand;
+import com.github.pires.obd.commands.protocol.SelectProtocolCommand;
+import com.github.pires.obd.commands.protocol.TimeoutCommand;
+import com.github.pires.obd.commands.temperature.AmbientAirTemperatureCommand;
+import com.github.pires.obd.enums.ObdProtocols;
 import com.infopae.model.PingObject;
 
 /**
@@ -96,9 +103,36 @@ public class MainActivity extends Activity {
 
 		        BluetoothSocket socket;
 				try {
-					socket = device.createInsecureRfcommSocketToServiceRecord(uuid);
+					socket = device.createRfcommSocketToServiceRecord(uuid);
 					socket.connect();
-					Toast.makeText(getBaseContext(), "We have a connection", Toast.LENGTH_LONG).show();
+					
+					//
+					try {
+						new ObdResetCommand().run(socket.getInputStream(), socket.getOutputStream());
+						
+						new EchoOffCommand().run(socket.getInputStream(), socket.getOutputStream());
+						
+						new LineFeedOffCommand().run(socket.getInputStream(), socket.getOutputStream());
+						
+						new TimeoutCommand(62).run(socket.getInputStream(), socket.getOutputStream());
+						
+						new SelectProtocolCommand(ObdProtocols.AUTO).run(socket.getInputStream(), socket.getOutputStream());
+						/*
+						AmbientAirTemperatureCommand foo = new AmbientAirTemperatureCommand();
+						foo.run(socket.getInputStream(), socket.getOutputStream());
+						
+						Toast.makeText(getBaseContext(), "foo = " + foo.getFormattedResult(), Toast.LENGTH_LONG).show();
+						*/
+						Toast.makeText(getBaseContext(), "foo = ", Toast.LENGTH_LONG).show();
+						
+						// job.getCommand().getFormattedResult()
+						
+					} catch (Exception e) {
+						Toast.makeText(getBaseContext(), "Connected, but error", Toast.LENGTH_SHORT).show();
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
 				} catch (IOException e) {
 					Toast.makeText(getBaseContext(), "We have a problem :(", Toast.LENGTH_LONG).show();
 					// TODO Auto-generated catch block
