@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">SDDL-PingAsyncTaskTest</string>
+    
+    <!-- Static Elements -->
+    <string name="uuid">UUID:</string>
+    <string name="ping">Ping!</string>
+    <string name="ip">IP:</string>
+    <string name="ip_hint">IP:PORTA (ex: 10.1.2.3:5500)</string>
+    
+    <!-- Dialog and Toast Messages -->
+    <string name="msg_e_invalid_ip">"Invalid IP:PORT, please try again."</string>
+    <string name="msg_d_valid_ip">"IP ok!"</string>
+	<string name="msg_d_connected">Conectado!</string>
+	<string name="msg_d_disconnected">Desconectado!</string>
+	<string name="msg_d_reconnected">Reconectado!</string>
+    
+</resources>
