@@ -1,15 +1,23 @@
 package lac.contextnet.sddl_pingasynctasktest;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Set;
 import java.util.UUID;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -41,6 +49,8 @@ public class MainActivity extends Activity {
 	
 	/* Others */	
 	private static boolean bluetoothDefaultIsEnable = false;
+	private String deviceAddress;
+	private BluetoothAdapter btAdapter;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -54,10 +64,54 @@ public class MainActivity extends Activity {
 		txt_uuid.setText(" " + GetUUID(getBaseContext()));
 		
 		/* Bluetooh */
-		final BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
-		if (btAdapter != null)
-			bluetoothDefaultIsEnable = btAdapter.isEnabled();
-		
+		ArrayList<String> deviceStrs = new ArrayList<String>();
+	    final ArrayList<String> devices = new ArrayList<String>();
+
+        btAdapter = BluetoothAdapter.getDefaultAdapter();
+        Set<BluetoothDevice> pairedDevices = btAdapter.getBondedDevices();
+        if (pairedDevices.size() > 0) {
+	        for (BluetoothDevice device : pairedDevices) {
+		        deviceStrs.add(device.getName() + "\n" + device.getAddress());
+		        devices.add(device.getAddress());
+	        }
+        }
+
+        // show list
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+
+        ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.select_dialog_singlechoice, deviceStrs.toArray(new String[deviceStrs.size()]));
+
+        alertDialog.setSingleChoiceItems(adapter, -1, new DialogInterface.OnClickListener() {
+	        @Override
+	        public void onClick(DialogInterface dialog, int which) {
+		        dialog.dismiss();
+		        int position = ((AlertDialog) dialog).getListView().getCheckedItemPosition();
+		        deviceAddress = (String) devices.get(position);
+		        
+		        // TODO save deviceAddress
+		        
+		        BluetoothDevice device = btAdapter.getRemoteDevice(deviceAddress);
+		        
+		        UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+
+		        BluetoothSocket socket;
+				try {
+					socket = device.createInsecureRfcommSocketToServiceRecord(uuid);
+					socket.connect();
+					Toast.makeText(getBaseContext(), "We have a connection", Toast.LENGTH_LONG).show();
+				} catch (IOException e) {
+					Toast.makeText(getBaseContext(), "We have a problem :(", Toast.LENGTH_LONG).show();
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+		        
+	        }
+        });
+
+        alertDialog.setTitle("Choose Bluetooth device");
+        alertDialog.show();
+		/* BLUETOOH END /
 		
 		/* Ping Button Listener*/
 		btn_ping.setOnClickListener(new OnClickListener() {
