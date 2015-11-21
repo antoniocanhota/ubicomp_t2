@@ -23,6 +23,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.pires.obd.commands.control.VinCommand;
+import com.github.pires.obd.commands.engine.RPMCommand;
 import com.github.pires.obd.commands.protocol.EchoOffCommand;
 import com.github.pires.obd.commands.protocol.LineFeedOffCommand;
 import com.github.pires.obd.commands.protocol.ObdResetCommand;
@@ -117,13 +119,13 @@ public class MainActivity extends Activity {
 						new TimeoutCommand(62).run(socket.getInputStream(), socket.getOutputStream());
 						
 						new SelectProtocolCommand(ObdProtocols.AUTO).run(socket.getInputStream(), socket.getOutputStream());
-						/*
-						AmbientAirTemperatureCommand foo = new AmbientAirTemperatureCommand();
+						
+						RPMCommand foo = new RPMCommand();
+						
 						foo.run(socket.getInputStream(), socket.getOutputStream());
 						
 						Toast.makeText(getBaseContext(), "foo = " + foo.getFormattedResult(), Toast.LENGTH_LONG).show();
-						*/
-						Toast.makeText(getBaseContext(), "foo = ", Toast.LENGTH_LONG).show();
+						
 						
 						// job.getCommand().getFormattedResult()
 						
