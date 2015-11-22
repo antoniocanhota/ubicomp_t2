@@ -25,15 +25,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import br.pucrio.acanhota.ubicomp.MonitoringService;
 
-import com.github.pires.obd.commands.control.VinCommand;
-import com.github.pires.obd.commands.engine.RPMCommand;
-import com.github.pires.obd.commands.protocol.EchoOffCommand;
-import com.github.pires.obd.commands.protocol.LineFeedOffCommand;
-import com.github.pires.obd.commands.protocol.ObdResetCommand;
-import com.github.pires.obd.commands.protocol.SelectProtocolCommand;
-import com.github.pires.obd.commands.protocol.TimeoutCommand;
-import com.github.pires.obd.commands.temperature.AmbientAirTemperatureCommand;
-import com.github.pires.obd.enums.ObdProtocols;
 import com.infopae.model.PingObject;
 
 /**
@@ -59,9 +50,7 @@ public class MainActivity extends Activity {
 	private Button btn_ping;
 	
 	/* Others */	
-	private static boolean bluetoothDefaultIsEnable = false;
 	private String deviceAddress;
-	private BluetoothAdapter btAdapter;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -74,11 +63,11 @@ public class MainActivity extends Activity {
 		btn_ping = (Button) findViewById(R.id.btn_ping);
 		txt_uuid.setText(" " + GetUUID(getBaseContext()));
 		
-		/* Bluetooh */
+		/* Bluetooh */		
 		ArrayList<String> deviceStrs = new ArrayList<String>();
 	    final ArrayList<String> devices = new ArrayList<String>();
 
-        btAdapter = BluetoothAdapter.getDefaultAdapter();
+	    BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
         Set<BluetoothDevice> pairedDevices = btAdapter.getBondedDevices();
         if (pairedDevices.size() > 0) {
 	        for (BluetoothDevice device : pairedDevices) {
@@ -97,61 +86,14 @@ public class MainActivity extends Activity {
 	        public void onClick(DialogInterface dialog, int which) {
 		        dialog.dismiss();
 		        int position = ((AlertDialog) dialog).getListView().getCheckedItemPosition();
-		        deviceAddress = (String) devices.get(position);
-		        
-		        // TODO save deviceAddress
-		        
-		        BluetoothDevice device = btAdapter.getRemoteDevice(deviceAddress);
-		        
-		        UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-
-		        BluetoothSocket socket;
-				try {
-					socket = device.createRfcommSocketToServiceRecord(uuid);
-					socket.connect();
-					
-					//
-					try {
-						new ObdResetCommand().run(socket.getInputStream(), socket.getOutputStream());
-						
-						new EchoOffCommand().run(socket.getInputStream(), socket.getOutputStream());
-						
-						new LineFeedOffCommand().run(socket.getInputStream(), socket.getOutputStream());
-						
-						new TimeoutCommand(62).run(socket.getInputStream(), socket.getOutputStream());
-						
-						new SelectProtocolCommand(ObdProtocols.AUTO).run(socket.getInputStream(), socket.getOutputStream());
-						
-						RPMCommand foo = new RPMCommand();
-						
-						foo.run(socket.getInputStream(), socket.getOutputStream());
-						
-						Toast.makeText(getBaseContext(), "foo = " + foo.getFormattedResult(), Toast.LENGTH_LONG).show();
-						
-						
-						// job.getCommand().getFormattedResult()
-						
-					} catch (Exception e) {
-						Toast.makeText(getBaseContext(), "Connected, but error", Toast.LENGTH_SHORT).show();
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					
-				} catch (IOException e) {
-					Toast.makeText(getBaseContext(), "We have a problem :(", Toast.LENGTH_LONG).show();
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-		        
+		        deviceAddress = (String) devices.get(position);		        
+		        startMonitoringService(deviceAddress);
 	        }
         });
 
-        alertDialog.setTitle("Choose Bluetooth device");
+        alertDialog.setTitle("Escolha o dispositivo OBD-2");
         alertDialog.show();
 		/* BLUETOOH END */
-		
-		startService(new Intent(this, MonitoringService.class));
 		
 		/* Ping Button Listener*/
 		btn_ping.setOnClickListener(new OnClickListener() {
@@ -175,6 +117,12 @@ public class MainActivity extends Activity {
 		});
 	}
 	
+	protected void startMonitoringService(String deviceAddress) {		
+		Intent mIntent = new Intent(this, MonitoringService.class);
+		mIntent.putExtra("deviceAddress", deviceAddress);    
+		startService(mIntent);
+	}
+
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
