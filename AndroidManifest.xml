@@ -24,6 +24,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <service android:enabled="true" android:name="br.pucrio.acanhota.ubicomp.MonitoringService" />
     </application>
 
 </manifest>

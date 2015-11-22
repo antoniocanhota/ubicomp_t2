@@ -12,6 +12,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import br.pucrio.acanhota.ubicomp.MonitoringService;
 
 import com.github.pires.obd.commands.control.VinCommand;
 import com.github.pires.obd.commands.engine.RPMCommand;
@@ -147,7 +149,9 @@ public class MainActivity extends Activity {
 
         alertDialog.setTitle("Choose Bluetooth device");
         alertDialog.show();
-		/* BLUETOOH END /
+		/* BLUETOOH END */
+		
+		startService(new Intent(this, MonitoringService.class));
 		
 		/* Ping Button Listener*/
 		btn_ping.setOnClickListener(new OnClickListener() {
@@ -169,6 +173,12 @@ public class MainActivity extends Activity {
 				commTask.execute();
 			}
 		});
+	}
+	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		stopService(new Intent(this, MonitoringService.class));
 	}
 
 	//See http://androidsnippets.com/generate-random-uuid-and-store-it
