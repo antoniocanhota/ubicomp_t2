@@ -21,7 +21,6 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
 
 /**
  * @author acanhota@puc-rio.br

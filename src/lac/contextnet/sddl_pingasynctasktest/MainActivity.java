@@ -1,6 +1,5 @@
 package lac.contextnet.sddl_pingasynctasktest;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
@@ -9,7 +8,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
