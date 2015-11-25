@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">SDDL-PingAsyncTaskTest</string>
+    <string name="app_name">ubicomp_t2</string>
     
     <!-- Static Elements -->
     <string name="uuid">UUID:</string>

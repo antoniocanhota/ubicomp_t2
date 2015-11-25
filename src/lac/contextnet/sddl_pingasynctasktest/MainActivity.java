@@ -108,7 +108,7 @@ public class MainActivity extends Activity {
 
 				/* Connection and Data send */
 				IPPort ipPortObj = new IPPort(ipPort);
-				PingObject ping = new PingObject();
+				PingObject ping = new PingObject("foo");
 				CommunicationTask commTask = new CommunicationTask(getBaseContext(), ipPortObj, UUID.fromString(uniqueID), PING_TAG, ping);
 				commTask.execute();
 			}
